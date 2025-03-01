@@ -9,12 +9,13 @@ datasource db {
 
 // User Related
 model User {
-  id             Int    @id @default(autoincrement())
-  username       String @unique(map: "username_UNIQUE")
+  id             Int        @id @default(autoincrement())
+  username       String     @unique(map: "username_UNIQUE")
+  email          String     @unique(map: "email_UNIQUE")
   hashedPassword String
   passwordSalt   String
-  roleId         String @map("UserRole")
-  statusId       String @map("UserStatus")
+  roleId         UserRole   @map("UserRole")
+  statusId       UserStatus @map("UserStatus")
   profileId      Int
 
   createdAt DateTime @default(now())
