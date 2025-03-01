@@ -9,8 +9,11 @@ import { genRandomString, getRandomDigit } from '../utils/common';
 import { ApiStatusCode } from '../utils/enum';
 import { hashPassword, verifyPassword } from '../utils/security';
 
+import { UserStatus, UserRole } from '@prisma/client';
+
 export interface IUserService {
     createUser(userReq: User): Promise<User>;
+    verifyUser(email: string, otp: string): Promise<boolean>;
     login(userReq: User): Promise<string>;
 }
 
@@ -51,6 +54,33 @@ export class UserService implements IUserService {
         const sendEmailSuccess = await sendVerificationEmail(userRes.email!, otp);
 
         return userRes.hideSensitive();
+    }
+
+    async verifyUser(email: string, otp: string): Promise<boolean> {
+
+        // Step 1: Check the OTP is correct
+        const getOtpRes = await this.otpRepo.getOtpByEmail(email);
+        if (getOtpRes?.otp !== otp) {
+            console.error(`Incorrect OTP: Except: ${getOtpRes?.otp}, Got ${otp}`);
+            return false;
+        }
+
+        if (new Date() > getOtpRes?.expiredAt) {
+            console.error(`OTP expired: Expired date: ${getOtpRes?.expiredAt}, Current ${new Date()}`);
+            return false;
+        }
+
+        // Step 2: Update OTP to used
+        const updateOtpRes = await this.otpRepo.updateOtpById(getOtpRes.id, { isUsed: 1 });
+
+        // Step 3: Update User status to "ACTIVE"
+        const getUserRes = await this.userRepo.getUserByEmail(email);
+        const updateUserRes = await this.userRepo.updateUserById(
+            getUserRes?.id!,
+            new User({ ...getUserRes, statusId: UserStatus.ACTIVE })
+        );
+
+        return true;
     }
 
     async login(userReq: User): Promise<string> {

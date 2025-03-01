@@ -24,4 +24,32 @@ export class OtpRepository implements IOtpRepository {
         return createdOtp;
     }
 
+    async updateOtpById(id: number, otp: Partial<Otp>): Promise<void> {
+        const updatedOtp = await this.prismaClient.otp.update({
+            where: {
+                id: id,
+                isUsed: 0,
+            },
+            data: {
+                isUsed: otp.isUsed,
+            },
+        });
+    }
+
+    async getOtpByEmail(email: string): Promise<Otp | null> {
+        const otpRes = await this.prismaClient.otp.findFirst({
+            where: {
+                email: email,
+                isUsed: 0,
+            },
+            orderBy: [
+                {
+                    createdAt: 'desc',
+                }
+            ],
+        });
+
+        return otpRes ? otpRes : null;
+    }
+
 }
