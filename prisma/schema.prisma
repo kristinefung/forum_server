@@ -14,8 +14,8 @@ model User {
   email          String     @unique(map: "email_UNIQUE")
   hashedPassword String
   passwordSalt   String
-  roleId         UserRole   @map("UserRole")
-  statusId       UserStatus @map("UserStatus")
+  roleId         UserRole
+  statusId       UserStatus
   profileId      Int
 
   createdAt DateTime @default(now())
@@ -35,13 +35,13 @@ model UserLoginLog {
   logoutAt     DateTime
 }
 
-model UserVerificationToken {
+model Otp {
   id        Int      @id @default(autoincrement())
-  userId    Int
-  token     String
+  email     String
+  otp       String
   createdAt DateTime @default(now())
   expiredAt DateTime
-  isUsed    Int      @default(1) @db.TinyInt
+  isUsed    Int      @default(0) @db.TinyInt
 }
 
 enum UserRole {

@@ -6,3 +6,10 @@ export function genRandomString(length: number): string {
     }
     return str;
 }
+
+export function getRandomDigit(length: number): string {
+    const max = Math.pow(10, length);
+    const randomNum = Math.floor(Math.random() * max);
+
+    return randomNum.toString().padStart(length, '0');
+}
