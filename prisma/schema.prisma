@@ -6,3 +6,79 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+// User Related
+model User {
+  id             Int    @id @default(autoincrement())
+  username       String @unique(map: "username_UNIQUE")
+  hashedPassword String
+  passwordSalt   String
+  roleId         String @map("UserRole")
+  statusId       String @map("UserStatus")
+  profileId      Int
+
+  createdAt DateTime @default(now())
+  createdBy Int      @default(0)
+  updatedAt DateTime @default(now())
+  updatedBy Int      @default(0)
+  deleted   Int      @default(0) @db.TinyInt
+}
+
+model UserLoginLog {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  ipAddress    String
+  userAgent    String
+  sessionToken Int
+  loginAt      DateTime
+  logoutAt     DateTime
+}
+
+model UserVerificationToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String
+  createdAt DateTime @default(now())
+  expiredAt DateTime
+  isUsed    Int      @default(1) @db.TinyInt
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum UserStatus {
+  NOT_VERIFIED
+  ACTIVE
+  DISABLED
+}
+
+// Thread Related
+model CategoryGroup {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+}
+
+model Category {
+  id          Int    @id @default(autoincrement())
+  groupId     Int
+  name        String
+  description String
+}
+
+model Thread {
+  id         Int    @id @default(autoincrement())
+  categoryId Int
+  title      String
+}
+
+model Comment {
+  id              Int    @id @default(autoincrement())
+  parentCommentId Int
+  threadId        Int
+  userId          Int
+  content         String
+  sequence        Int
+}
