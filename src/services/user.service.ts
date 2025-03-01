@@ -65,12 +65,12 @@ export class UserService implements IUserService {
         const getOtpRes = await this.otpRepo.getOtpByEmail(email);
         if (getOtpRes?.otp !== otp) {
             console.error(`Incorrect OTP: Expected: ${getOtpRes?.otp}, Got ${otp}`);
-            return false;
+            throw new ApiError("Invalid OTP", ApiStatusCode.INVALID_ARGUMENT, 400);
         }
 
         if (new Date() > getOtpRes?.expiredAt) {
             console.error(`OTP expired: Expired date: ${getOtpRes?.expiredAt}, Current ${new Date()}`);
-            return false;
+            throw new ApiError("OTP expired", ApiStatusCode.INVALID_ARGUMENT, 400);
         }
 
         // Step 2: Update OTP to used
