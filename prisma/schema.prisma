@@ -26,13 +26,13 @@ model User {
 }
 
 model UserLoginLog {
-  id           Int      @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   userId       Int
   ipAddress    String
   userAgent    String
-  sessionToken Int
+  sessionToken String
   loginAt      DateTime
-  logoutAt     DateTime
+  logoutAt     DateTime?
 }
 
 model Otp {
@@ -60,6 +60,12 @@ model CategoryGroup {
   id          Int    @id @default(autoincrement())
   name        String
   description String
+
+  createdAt DateTime @default(now())
+  createdBy Int      @default(0)
+  updatedAt DateTime @default(now())
+  updatedBy Int      @default(0)
+  deleted   Int      @default(0) @db.TinyInt
 }
 
 model Category {
@@ -67,12 +73,24 @@ model Category {
   groupId     Int
   name        String
   description String
+
+  createdAt DateTime @default(now())
+  createdBy Int      @default(0)
+  updatedAt DateTime @default(now())
+  updatedBy Int      @default(0)
+  deleted   Int      @default(0) @db.TinyInt
 }
 
 model Thread {
   id         Int    @id @default(autoincrement())
   categoryId Int
   title      String
+
+  createdAt DateTime @default(now())
+  createdBy Int      @default(0)
+  updatedAt DateTime @default(now())
+  updatedBy Int      @default(0)
+  deleted   Int      @default(0) @db.TinyInt
 }
 
 model Comment {
@@ -82,4 +100,10 @@ model Comment {
   userId          Int
   content         String
   sequence        Int
+
+  createdAt DateTime @default(now())
+  createdBy Int      @default(0)
+  updatedAt DateTime @default(now())
+  updatedBy Int      @default(0)
+  deleted   Int      @default(0) @db.TinyInt
 }

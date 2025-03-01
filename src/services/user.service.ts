@@ -1,5 +1,7 @@
 import { UserRepository } from '../repositories/user.repository';
 import { OtpRepository } from '../repositories/otp.repository';
+import { UserLoginLogRepository } from '../repositories/user_login_log.repository';
+
 import { User } from '../entities/user.entity';
 
 import { sendVerificationEmail } from '../adapters/mailgun';
@@ -7,7 +9,7 @@ import { sendVerificationEmail } from '../adapters/mailgun';
 import { ApiError } from '../utils/err';
 import { genRandomString, getRandomDigit } from '../utils/common';
 import { ApiStatusCode } from '../utils/enum';
-import { hashPassword, verifyPassword } from '../utils/security';
+import { hashPassword, verifyPassword, generateUserSessionToken } from '../utils/security';
 
 import { UserStatus, UserRole } from '@prisma/client';
 
@@ -21,6 +23,7 @@ export class UserService implements IUserService {
     constructor(
         private userRepo: UserRepository,
         private otpRepo: OtpRepository,
+        private userLoginLogRepo: UserLoginLogRepository,
     ) { }
 
     async createUser(userReq: User): Promise<User> {
@@ -61,7 +64,7 @@ export class UserService implements IUserService {
         // Step 1: Check the OTP is correct
         const getOtpRes = await this.otpRepo.getOtpByEmail(email);
         if (getOtpRes?.otp !== otp) {
-            console.error(`Incorrect OTP: Except: ${getOtpRes?.otp}, Got ${otp}`);
+            console.error(`Incorrect OTP: Expected: ${getOtpRes?.otp}, Got ${otp}`);
             return false;
         }
 
@@ -85,6 +88,7 @@ export class UserService implements IUserService {
 
     async login(userReq: User): Promise<string> {
         // Step 0: Data validation
+        console.log(typeof userReq);
         let user = userReq.loginInputToUser();
 
         // Step 1: Check if email and password are correct
@@ -99,9 +103,13 @@ export class UserService implements IUserService {
         }
 
         // Step 2: Generate user session token
-        // const token = await this.authServ.generateUserSessionToken(dbUser.id!);
-        const token = "";
+        const sessionToken = generateUserSessionToken(dbUser.id!);
+        const creatUserLoginLogRes = await this.userLoginLogRepo.createUserLoginLog({
+            userId: dbUser.id,
+            sessionToken: sessionToken,
+            loginAt: new Date(),
+        })
 
-        return token;
+        return sessionToken;
     }
 }

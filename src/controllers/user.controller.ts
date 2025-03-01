@@ -41,4 +41,17 @@ export class UserController implements IUserController {
         }
     }
 
+    async login(req: Request, res: Response) {
+        try {
+            // Step 1: Call service to handle business logic
+            const userReq = new User(req.body);
+            const userSessionToken = await this.userServ.login(userReq);
+
+            // Step 2: return success response
+            return jsonResponse(res, { userSessionToken: userSessionToken }, null);
+        } catch (err) {
+            return jsonResponse(res, {}, err);
+        }
+    }
+
 }

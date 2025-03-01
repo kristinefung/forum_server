@@ -15,7 +15,7 @@ router.get('/health', (req, res) => { res.json({ status: 'health' }) });
  *                        User Module
  ************************************************************/
 router.post('/users', (req, res) => userCtlr.createUser(req, res));
-
 router.post('/users/verify-user', (req, res) => userCtlr.verifyUser(req, res));
+router.post('/users/login', (req, res) => userCtlr.login(req, res));
 
 export { router };

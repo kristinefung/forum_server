@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 import { UserRepository } from '../repositories/user.repository';
 import { OtpRepository } from '../repositories/otp.repository';
+import { UserLoginLogRepository } from '../repositories/user_login_log.repository';
 
 import { UserService } from '../services/user.service';
 
@@ -14,6 +15,7 @@ export class IoCContainer {
 
     private userRepo: UserRepository;
     private otpRepo: OtpRepository;
+    private userLoginLogRepo: UserLoginLogRepository;
 
     private userServ: UserService;
 
@@ -31,9 +33,10 @@ export class IoCContainer {
         // Repositories
         this.userRepo = new UserRepository(this.prismaClient);
         this.otpRepo = new OtpRepository(this.prismaClient);
+        this.userLoginLogRepo = new UserLoginLogRepository(this.prismaClient);
 
         // Services
-        this.userServ = new UserService(this.userRepo, this.otpRepo);
+        this.userServ = new UserService(this.userRepo, this.otpRepo, this.userLoginLogRepo);
 
         // Controllers
         this.userCtlr = new UserController(this.userServ);
