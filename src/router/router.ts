@@ -4,6 +4,7 @@ import { IoCContainer } from '../ioc/ioc_container';
 const iocContainer = new IoCContainer();
 const userCtlr = iocContainer.getUserController();
 const categoryGroupCtlr = iocContainer.getCategoryGroupController();
+const categoryCtlr = iocContainer.getCategoryController();
 
 const router = express.Router();
 
@@ -27,5 +28,14 @@ router.get('/category-groups/:id', (req, res) => categoryGroupCtlr.getCategoryGr
 router.get('/category-groups', (req, res) => categoryGroupCtlr.getAllCategoryGroups(req, res));
 router.delete('/category-groups/:id', (req, res) => categoryGroupCtlr.deleteCategoryGroupById(req, res));
 router.put('/category-groups/:id', (req, res) => categoryGroupCtlr.updateCategoryGroupById(req, res));
+
+/*************************************************************
+ *                    Category Module
+ ************************************************************/
+router.post('/categories', (req, res) => categoryCtlr.createCategory(req, res));
+router.get('/categories/:id', (req, res) => categoryCtlr.getCategoryById(req, res));
+router.get('/categories', (req, res) => categoryCtlr.getAllCategories(req, res));
+router.delete('/categories/:id', (req, res) => categoryCtlr.deleteCategoryById(req, res));
+router.put('/categories/:id', (req, res) => categoryCtlr.updateCategoryById(req, res));
 
 export { router };
