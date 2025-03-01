@@ -5,6 +5,7 @@ const iocContainer = new IoCContainer();
 const userCtlr = iocContainer.getUserController();
 const categoryGroupCtlr = iocContainer.getCategoryGroupController();
 const categoryCtlr = iocContainer.getCategoryController();
+const threadCtlr = iocContainer.getThreadController();
 
 const router = express.Router();
 
@@ -37,5 +38,14 @@ router.get('/categories/:id', (req, res) => categoryCtlr.getCategoryById(req, re
 router.get('/categories', (req, res) => categoryCtlr.getAllCategories(req, res));
 router.delete('/categories/:id', (req, res) => categoryCtlr.deleteCategoryById(req, res));
 router.put('/categories/:id', (req, res) => categoryCtlr.updateCategoryById(req, res));
+
+/*************************************************************
+ *                      Thread Module
+ ************************************************************/
+router.post('/threads', (req, res) => threadCtlr.createThread(req, res));
+router.get('/threads/:id', (req, res) => threadCtlr.getThreadById(req, res));
+router.get('/threads', (req, res) => threadCtlr.getAllThreads(req, res));
+router.delete('/threads/:id', (req, res) => threadCtlr.deleteThreadById(req, res));
+router.put('/threads/:id', (req, res) => threadCtlr.updateThreadById(req, res));
 
 export { router };
