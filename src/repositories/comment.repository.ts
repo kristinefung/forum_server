@@ -5,7 +5,7 @@ export interface ICommentRepository {
     getCommentById(id: number): Promise<Comment | null>;
     getAllComments(): Promise<Comment[]>;
     findCommentsByThreadId(threadId: number): Promise<Comment[]>
-    getLastCommentByThreadId(threadId: number): Promise<Comment | null>
+    getNextSequenceByThreadId(threadId: number): Promise<number>
     deleteCommentById(id: number): Promise<void>;
     updateCommentById(id: number, comment: Partial<Comment>): Promise<Comment>;
 }
@@ -64,7 +64,7 @@ export class CommentRepository implements ICommentRepository {
         return comments;
     }
 
-    async getLastCommentByThreadId(threadId: number): Promise<Comment | null> {
+    async getNextSequenceByThreadId(threadId: number): Promise<number> {
         const comment = await this.prismaClient.comment.findFirst({
             where: {
                 threadId: threadId,
@@ -76,7 +76,7 @@ export class CommentRepository implements ICommentRepository {
                 }
             ],
         });
-        return comment;
+        return comment?.sequence ? comment.sequence + 1 : 1;
     }
 
     async deleteCommentById(id: number): Promise<void> {

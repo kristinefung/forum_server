@@ -22,18 +22,14 @@ export class CommentService implements ICommentService {
 
 
         // Step 2: Insert comment into database
-        const lastCommentRes = await this.commentRepo.getLastCommentByThreadId(threadId);
-        let sequence = 1;
-        if (lastCommentRes) {
-            sequence = lastCommentRes.sequence + 1;
-        }
+        const nextSequence = await this.commentRepo.getNextSequenceByThreadId(threadId);
 
         const commentRes = await this.commentRepo.createComment(
             parentCommentId,
             threadId,
             userId,
             content,
-            sequence
+            nextSequence
         );
 
         return commentRes;
