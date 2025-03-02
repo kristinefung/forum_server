@@ -95,7 +95,7 @@ model Thread {
 
 model Comment {
   id              Int    @id @default(autoincrement())
-  parentCommentId Int
+  parentCommentId Int?
   threadId        Int
   userId          Int
   content         String
