@@ -72,7 +72,7 @@ export class CommentRepository implements ICommentRepository {
             },
             orderBy: [
                 {
-                    createdAt: 'desc',
+                    sequence: 'desc',
                 }
             ],
         });
