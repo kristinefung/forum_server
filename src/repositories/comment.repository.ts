@@ -67,8 +67,7 @@ export class CommentRepository implements ICommentRepository {
     async getNextSequenceByThreadId(threadId: number): Promise<number> {
         const comment = await this.prismaClient.comment.findFirst({
             where: {
-                threadId: threadId,
-                deleted: 0
+                threadId: threadId
             },
             orderBy: [
                 {
